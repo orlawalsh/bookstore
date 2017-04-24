@@ -118,7 +118,7 @@ describe DataAccess do
        end 
         context "related book is in the remote cache" do
           it "should update in the remote cache and database" do
-            expect(@sqlite_database).to receive(:updateStock).with(@book1)
+            expect(@sqlite_database).to receive(:updateStock).with(@book2)
             expect(@dalli_client).to receive(:get).with("v_#{@book2.isbn}" ).
                    and_return(2)
             expect(@dalli_client).to receive(:set).with("v_#{@book2.isbn}",3)
@@ -127,3 +127,15 @@ describe DataAccess do
     end  
 
 end
+
+ context "book is exisiting and in memcache" do
+  it "should add to the database but also update the memcache" do
+ before(:each) do
+ expect(@sqlite_database).to receive(:updateStock).with(@book1).and_return(1)
+  expect(@dalli_client).to receive(:get).with('v_1111').and_return(2)
+expect(@dalli_client).to receive(:get).with('1111_2').and_return  @book1.to_cache
+ result = @data_access.updateStock(@book1) 
+ end
+end
+end
+      end  
