@@ -34,7 +34,9 @@ describe "Update Stock feature" do
 
       context "when it is in the remote cache" do
          it "should update the remote cache unchanged" do
-             # ..... to be completed ......
+           before(:each) do
+            @memcache_client.set "v_1112", 1
+            @memcache_client.set "1112_1", @book2.to_cache
          end
       end          
    end

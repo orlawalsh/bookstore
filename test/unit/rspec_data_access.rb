@@ -110,10 +110,20 @@ describe DataAccess do
 
         context "book is new" do
           it "should add it to database but leave remote cache unchanged" do
-              # .... to be completed ....
+            expect(@sqlite_database).to receive(:updateStock).with(@book2)
+            expect(@dalli_client).to receive(:get).with("v_#{@book2.isbn}" ).
+                   and_return(nil)
+            @data_access.updateStock(@book1)   
          end
        end 
-         # ..... to be completed .......
+        context "related book is in the remote cache" do
+          it "should update in the remote cache and database" do
+            expect(@sqlite_database).to receive(:updateStock).with(@book1)
+            expect(@dalli_client).to receive(:get).with("v_#{@book2.isbn}" ).
+                   and_return(2)
+            expect(@dalli_client).to receive(:set).with("v_#{@book2.isbn}",3)
+            expect(@dalli_client).to receive(:set).with("#{@book2.isbn}_3",@book1.to_cache )                 
+            @data_access.updateStock(@book1)  
     end  
 
 end
